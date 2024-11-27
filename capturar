@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tomar Foto</title>
+  <style>
+    body { font-family: Arial, sans-serif; text-align: center; margin-top: 50px; }
+    #video { width: 80%; height: auto; }
+    #canvas { display: none; }
+    #photo { width: 80%; height: auto; margin-top: 20px; }
+  </style>
+</head>
+<body>
+  <h1>Tomar Foto</h1>
+  <video id="video" autoplay playsinline></video>
+  <button id="snapButton">Tomar Foto</button>
+  <canvas id="canvas"></canvas>
+  <img id="photo" alt="Tu foto aparecerá aquí">
+  <button id="downloadButton" style="display: none;">Descargar Foto</button>
+
+  <script>
+    // Acceder a la cámara del dispositivo
+    const video = document.getElementById('video');
+    const canvas = document.getElementById('canvas');
+    const photo = document.getElementById('photo');
+    const snapButton = document.getElementById('snapButton');
+    const downloadButton = document.getElementById('downloadButton');
+
+    navigator.mediaDevices.getUserMedia({ video: true })
+      .then(stream => {
+        video.srcObject = stream;
+      })
+      .catch(error => {
+        console.error('Error al acceder a la cámara:', error);
+      });
+
+    // Tomar una foto
+    snapButton.addEventListener('click', () => {
+      const context = canvas.getContext('2d');
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      context.drawImage(video, 0, 0, canvas.width, canvas.height);
+      const dataUrl = canvas.toDataURL('image/png');
+      photo.src = dataUrl;
+      downloadButton.style.display = 'block';
+      downloadButton.href = dataUrl;
+      downloadButton.download = 'foto.png';
+    });
+  </script>
+</body>
+</html>
